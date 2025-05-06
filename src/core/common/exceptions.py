@@ -1,0 +1,4 @@
+
+
+class UnAutorisedException(Exception):
+    pass

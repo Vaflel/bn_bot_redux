@@ -1,26 +1,22 @@
 import os
 import asyncio
-
+from PIL import Image
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-from PIL import Image
 
 
-
-class ScheduleParser():
-    schedule_sheets = [
-        f"/html/body/div/div/div/div[2]/div[2]/div[2]/div/div[5]/div/div[{i}]"
-        for i in range(1, 6)
-    ]
-
+class SeleniumScheduleParser():
     def __init__(self, department_name: str, group_name: str):
         self.department_name = department_name
         self.group_name = group_name
 
-    async def get_shedule_screenshots(self):
+    async def get_image(self):
+        await self._get_shedule_screenshots()
+
+    async def _get_shedule_screenshots(self):
         options = Options()
         #options.add_argument("--headless")  # Включаем headless режим
         #options.add_argument("--disable-gpu")  # Отключаем использование GPU для ускорения
@@ -36,14 +32,14 @@ class ScheduleParser():
         group_btn = driver.find_element(By.XPATH, value="/html/body/div/div/div/div[2]/div[2]/div[1]/div/div[2]").click()
         await asyncio.sleep(5)
         group_list = driver.find_element(By.XPATH, value="/html/body/div/div/div/div[2]/div[2]/div[1]/div/div[2]/ul")
-        await asyncio.sleep(10)
+        await asyncio.sleep(5)
         driver.execute_script("arguments[0].scrollBy(0, 560);", group_list)
         await asyncio.sleep(5)
         group_list_btn = driver.find_element(By.XPATH,
                                              value=f"/html/body/div/div/div/div[2]/div[2]/div[1]/div/div[2]/ul/li[text()='{self.group_name}']").click()
         await asyncio.sleep(5)
-        # next_week = driver.find_element(By.XPATH, value="/html/body/div/div/div/div[2]/div[2]/div[2]/div/div[4]/button[2]").click()
-        # await asyncio.sleep(5)
+        #next_week = driver.find_element(By.XPATH, value="/html/body/div/div/div/div[2]/div[2]/div[2]/div/div[4]/button[2]").click()
+        #await asyncio.sleep(5)
         week_schedule = driver.find_element(By.XPATH, value="/html/body/div/div/div/div[2]/div[2]/div[2]/div/div[5]/div")
         day_schedule: list = week_schedule.find_elements(By.TAG_NAME, 'div')
         screenshot_num = 0
@@ -53,6 +49,7 @@ class ScheduleParser():
             day.screenshot("../data/" + str(screenshot_num) + self.group_name +".png")
             await asyncio.sleep(3)
         self._make_a_collage()  # Создаем картинку с расписанием
+        driver.close()
 
     def _make_a_collage(self):
         # Используем list comprehension для создания списка имен файлов
@@ -84,10 +81,9 @@ class ScheduleParser():
             if os.path.exists(full_path):
                 os.remove(full_path)
 
-dep = "Факультет искусств и физической культуры"
-grp = "МД-23-о"
-if __name__ == '__main__':
+if __name__ == "__main__":
+    async def main():
+        parser = SeleniumScheduleParser(department_name="Факультет искусств и физической культуры", group_name="МД-22-о")
+        await parser._get_shedule_screenshots()
 
-    parser = ScheduleParser(department_name=dep, group_name=grp)
-    parser._make_a_collage()
-    #asyncio.run(parser.get_shedule_screenshots())
+    asyncio.run(main())
