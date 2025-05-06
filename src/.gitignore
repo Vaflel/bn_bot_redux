@@ -1,5 +1,5 @@
 .idea/
-bn_bot_redux/.idea/
+*.idea/
 .venv/
 __pycache__/
 data/
