@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     EMAIL_PASSWORD: str
     IMAP_SERVER: str
 
-    DATA_DIRECTORY: str = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data'))
+    DATA_DIRECTORY: str = os.path.abspath(os.path.join(os.path.dirname(__file__), './data'))
 
     SCHEDULE_URL: str
     REQ_HEADERS: dict

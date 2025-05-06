@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 
-from src.config import settings
+from config import settings
 
 from src.bot_api.handlers.schedule_handlers import router as schedule_router
 # from src.bot_api.handlers.collection_handlers import router as collections_router

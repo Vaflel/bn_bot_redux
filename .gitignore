@@ -4,4 +4,4 @@
 __pycache__/
 data/
 
-src/.env
+.env

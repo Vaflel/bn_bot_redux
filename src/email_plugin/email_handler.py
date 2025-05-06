@@ -4,7 +4,7 @@ from email.header import decode_header
 import os
 from datetime import datetime, timedelta
 
-from src.config import settings
+from config import settings
 
 
 class EmailScheduleManager:

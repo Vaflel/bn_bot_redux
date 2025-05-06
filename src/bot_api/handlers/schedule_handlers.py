@@ -1,13 +1,9 @@
-import os
-from io import BytesIO
-
 from aiogram import Router, types
 from aiogram.filters import Command
-from aiogram.types import FSInputFile, BufferedInputFile
+from aiogram.types import BufferedInputFile
 
 from src.core.schedule.service import ScheduleService
 from src.core.users.service import UsersService
-from src.config import settings
 
 router = Router()
 
@@ -22,7 +18,7 @@ async def schedule_from_user(message: types.Message):
     # with open("img.png", "wb") as f:
     #     f.write(image)
     #file_path = f'../data/{user.group_name}_schedule.png'
-    document = BufferedInputFile(image,filename=f"{user.name}_schedule")
+    document = BufferedInputFile(image,filename=f"{user.name}_schedule.png")
 
     await message.answer_document(
         text=f"Расписание из байтов для {user.name}",

@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import xlrd
 
 from src.core.schedule.schemas import Lesson, LessonTime, LessonDate
-from src.config import settings
+from config import settings
 
 
 class RequestsScheduleParser:
@@ -339,9 +339,6 @@ class IndividualScheduleParser:
 
 
 if __name__ == "__main__":
-    from src.core.schedule.schedule_builder import ScheduleBuilder
-    from src.core.schedule.image_creator import ImageCreator
-
     parser = RequestsScheduleParser(
         department_name="Факультет искусств и физической культуры",
         group_name="МД-24-о",

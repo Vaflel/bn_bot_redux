@@ -1,7 +1,5 @@
-import os.path
 from datetime import datetime
 
-from src.config import settings
 from src.core.schedule.parsers import RequestsScheduleParser, IndividualScheduleParser
 from src.core.schedule.schemas import Lesson
 from src.core.users.schemas import SUser
@@ -15,7 +13,7 @@ class ScheduleService:
         self.user: SUser = user_dto
 
     def create_schedule(self):
-        email = EmailScheduleManager
+        email = EmailScheduleManager()
         email.process_letters()
         parser = RequestsScheduleParser(
             department_name=self.user.department_name,

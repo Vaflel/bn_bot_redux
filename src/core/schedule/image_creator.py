@@ -1,10 +1,8 @@
-import os.path
-
 from jinja2 import Template
 import imgkit
 
 from src.core.schedule.schemas import WeekSchedule
-from src.config import settings
+
 
 class ImageCreator:
     def __init__(self, schedule):
@@ -96,20 +94,21 @@ class ImageCreator:
             "encoding": "UTF-8"
         }
 
-        config = imgkit.config(wkhtmltoimage='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe')
+        #config = imgkit.config(wkhtmltoimage='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe')
+        config = imgkit.config(wkhtmltoimage='/usr/bin/wkhtmltoimage')
 
-        # image_data = imgkit.from_string(
-        #     html_template.render(schedule=self.schedule),
-        #     False,  # Устанавливаем output_path в False
-        #     options=options,
-        #     config=config,
-        # )
-        #
-        # return image_data
-
-        imgkit.from_string(
+        image_data = imgkit.from_string(
             html_template.render(schedule=self.schedule),
-            output_path=os.path.join(settings.DATA_DIRECTORY, f"{self.schedule.group_name} ({self.schedule.student}) schedule.png"),
+            False,  # Устанавливаем output_path в False
             options=options,
             config=config,
         )
+
+        return image_data
+
+        # imgkit.from_string(
+        #     html_template.render(schedule=self.schedule),
+        #     output_path=os.path.join(settings.DATA_DIRECTORY, f"{self.schedule.group_name} ({self.schedule.student}) schedule.png"),
+        #     options=options,
+        #     config=config,
+        # )

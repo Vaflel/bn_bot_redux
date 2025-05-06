@@ -2,8 +2,7 @@ import os.path
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
-from src.config import settings
-from src.core.users.models import UsersOrm
+from config import settings
 from src.core.common.models import Model
 
 db_path = os.path.join(settings.DATA_DIRECTORY, "bot.db")
