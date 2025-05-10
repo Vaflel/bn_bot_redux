@@ -2,13 +2,6 @@ from dataclasses import dataclass
 from datetime import datetime
 
 
-# @dataclass
-# class LessonDate:
-#     date: str
-#     day_name: str
-#     week_date_start: str
-#     week_date_end: str
-
 @dataclass
 class LessonDate:
     date: str

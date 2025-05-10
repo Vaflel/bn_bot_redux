@@ -12,7 +12,7 @@ class ScheduleService:
     def __init__(self, user_dto: SUser):
         self.user: SUser = user_dto
 
-    def create_schedule(self):
+    def create_schedule(self) -> bytes:
         email = EmailScheduleManager()
         email.process_letters()
         parser = RequestsScheduleParser(
@@ -119,4 +119,6 @@ if __name__ == "__main__":
         department_name="Факультет искусств и физической культуры",
     )
     service = ScheduleService(user)
-    service.create_schedule()
+    image = service.create_schedule()
+    with open("img.png", "wb") as f:
+        f.write(image)

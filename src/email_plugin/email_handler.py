@@ -28,7 +28,14 @@ class EmailScheduleManager:
         self._delete_old_letters()
         letter_indexes = self._get_all_letters()
         for index in letter_indexes:
-            status, data = self.mail.fetch(index, "(RFC822)")
+            # Используем uid для получения письма
+            status, data = self.mail.uid('fetch', index, "(RFC822)")
+
+            # Проверка успешности выполнения fetch и того, что data не None
+            if status != 'OK' or data is None or len(data) < 2:
+                print(f"Ошибка при получении письма с индексом {index}: {status}")
+                continue  # Переходим к следующему индексу
+
             raw_email = data[0][1]
             msg = email.message_from_bytes(raw_email)
 

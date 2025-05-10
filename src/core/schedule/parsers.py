@@ -24,7 +24,6 @@ class RequestsScheduleParser:
         lessons_data = self._get_lessons_data()
         group_lessons = []
         for lesson in lessons_data:
-            print(lesson.get("DISC_TYPE"))
             extractor = ScheduleDataExtractor(lesson)
             lesson_objects = extractor.extract()
             for lesson_obj in lesson_objects:
@@ -51,7 +50,6 @@ class RequestsScheduleParser:
 
         group_id = {
             'GroupId': (None, str(group_value)),
-            'WeekNum': (None, '2025-04-21'),
         }
 
         schedule_data_resp = self.session.post(f'{settings.SCHEDULE_URL}plugins/AutoRasp/GroupLessonList.php',
@@ -152,7 +150,12 @@ class ScheduleDataExtractor:
 
     def _cut_discipline(self):
         discipline = self.data.get("DISC_NAME")
-        return discipline
+        disc_type = self.data.get("DISC_TYPE")
+
+        if disc_type == "":
+            return discipline
+        else:
+            return f"{discipline} [{disc_type}]"
 
     def _cut_teacher(self):
         teacher = self.data.get("TEACHER_NAME")
@@ -345,6 +348,7 @@ if __name__ == "__main__":
         group_name="МД-24-о",
     )
     group_lessons = parser.parse()
-    print(group_lessons)
+    for lesson in group_lessons:
+        print(lesson.discipline)
 
 
