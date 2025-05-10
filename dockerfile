@@ -13,7 +13,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Копирование кода приложения
-COPY . /app
+COPY . /app/src
 WORKDIR /app
 
 # Запуск приложения

@@ -3,8 +3,10 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram import Router, types, F
 from aiogram.filters import Command
 
-from src.core.users.service import UsersService
+from src.bot_api.utils.departments_list import departments_short_names
+from src.core.users.service import UsersService, UserIsExist
 from src.core.users.schemas import SUser
+from src.bot_api.keyboards.login_kb import login_keyboard
 
 router = Router()
 
@@ -34,14 +36,16 @@ async def login(message: types.Message, state: FSMContext) -> None:
 async def process_name(message: types.Message, state: FSMContext) -> None:
     await state.update_data(name=message.text)
     await state.set_state(UserForm.department_name)
-    await message.answer(text=f"Хорошо, введи название своего факультета")
+    await message.answer(text=f"Хорошо, выбери свой факультет", reply_markup=login_keyboard)
 
 
-@router.message(UserForm.department_name)
-async def process_department_name(message: types.Message, state: FSMContext):
-    await state.update_data(department_name=message.text)
+@router.callback_query(UserForm.department_name)
+async def process_department_name(callback: types.CallbackQuery, state: FSMContext):
+    department_name = departments_short_names.get(callback.data)
+    await state.update_data(department_name=department_name)
     await state.set_state(UserForm.group_name)
-    await message.answer(text=f"Хорошо, введи название своей группы")
+    await callback.message.answer(text=f"Хорошо, введи название своей группы")
+    await callback.answer()
 
 
 @router.message(UserForm.group_name)
@@ -53,7 +57,10 @@ async def process_group_name(message: types.Message, state: FSMContext):
         group_name=data.get("group_name"),
         department_name=data.get("department_name"),
     )
-    await UsersService.create_user(user)
-    text = f"Пользователь создан, теперь в расписание будут добавляться индивидуальные занятия для {user.name}"
-    await message.answer(text=text)
+    try:
+        await UsersService.create_user(user)
+        text = f"Пользователь создан, теперь в расписание будут добавляться индивидуальные занятия для {user.name}"
+        await message.answer(text=text)
+    except UserIsExist:
+        await message.answer("Пользователь уже существует")
     await state.clear()

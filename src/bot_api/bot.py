@@ -22,11 +22,11 @@ dp.include_router(login_router)
 
 @dp.message(CommandStart())
 async def start_cmd(message: types.Message):
-    test_user = SUser(
-        id=836309692,
-        name="Климанова П.",
-        group_name="МД-21-о",
-        department_name="Факультет искусств и физической культуры",
-    )
-    await UsersService.create_user(test_user)
+    # test_user = SUser(
+    #     id=836309692,
+    #     name="Климанова П.",
+    #     group_name="МД-21-о",
+    #     department_name="Факультет искусств и физической культуры",
+    # )
+    # await UsersService.create_user(test_user)
     await message.reply(text='Привет, чем могу помочь?', reply_markup=main_kb)

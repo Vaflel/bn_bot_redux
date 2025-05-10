@@ -1,3 +1,5 @@
+import os
+
 from jinja2 import Template
 import imgkit
 
@@ -95,7 +97,15 @@ class ImageCreator:
         }
 
         #config = imgkit.config(wkhtmltoimage='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe')
-        config = imgkit.config(wkhtmltoimage='/usr/bin/wkhtmltoimage')
+        #config = imgkit.config(wkhtmltoimage='/usr/bin/wkhtmltoimage')
+
+        # Определяем путь к wkhtmltoimage в зависимости от операционной системы
+        if os.name == 'nt':  # Windows
+            config = imgkit.config(wkhtmltoimage='C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe')
+        else:  # Linux и другие ОС
+            config = imgkit.config(wkhtmltoimage='/usr/bin/wkhtmltoimage')
+
+        # Теперь вы можете использовать config в вашем коде
 
         image_data = imgkit.from_string(
             html_template.render(schedule=self.schedule),

@@ -24,6 +24,7 @@ class RequestsScheduleParser:
         lessons_data = self._get_lessons_data()
         group_lessons = []
         for lesson in lessons_data:
+            print(lesson.get("DISC_TYPE"))
             extractor = ScheduleDataExtractor(lesson)
             lesson_objects = extractor.extract()
             for lesson_obj in lesson_objects:
@@ -345,25 +346,5 @@ if __name__ == "__main__":
     )
     group_lessons = parser.parse()
     print(group_lessons)
-    # parser2 = IndividualScheduleParser()
-    # ind_lessons = parser2.parse()
-    # print(ind_lessons)
-    # all_lessons = group_lessons + ind_lessons
 
-    # for lesson in ind_lessons:
-    #     print(lesson)
 
-    # selected_lessons = []
-    # for lesson in all_lessons:
-    #     if lesson.group == "МД-24-о" and (lesson.student == "Мкртычан С." or lesson.student is None):
-    #         selected_lessons.append(lesson)
-    #
-    # sel_lessons = []
-    # for lesson in selected_lessons:
-    #     lesson.student = "Мкртычан С."
-    #     sel_lessons.append(lesson)
-    #
-    # builder = ScheduleBuilder(sel_lessons)
-    # schedule = builder.build()
-    # creator = ImageCreator(schedule)
-    # creator.generate_image()

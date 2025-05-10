@@ -4,13 +4,13 @@ main_kb = ReplyKeyboardMarkup(
     resize_keyboard=True,
     keyboard = [
         [
-            KeyboardButton(text = "/Сбор"),
+            KeyboardButton(text = "/login"),
             KeyboardButton(text = "/Расписание"),
         ],
-        [
-            KeyboardButton(text="/admin"),
-            KeyboardButton(text="/login")
-        ]
+        # [
+        #     KeyboardButton(text="/admin"),
+        #     KeyboardButton(text="/login")
+        # ]
     ]
     )
 

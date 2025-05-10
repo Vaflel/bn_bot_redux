@@ -7,10 +7,15 @@ from src.core.common.uow import uow
 
 users_list = []
 
+class UserIsExist(Exception):
+    pass
+
 class UsersService:
     @staticmethod
     async def create_user(user_dto: SUser):
         async with uow:
+            if await uow.users.get_by_id(user_dto.id):
+                raise UserIsExist
             uow.users.add(user_dto)
 
     @staticmethod

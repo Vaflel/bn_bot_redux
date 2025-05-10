@@ -14,20 +14,8 @@ async def schedule_from_user(message: types.Message):
         await message.answer(text="Сначала зарегистрируйся")
     service = ScheduleService(user)
     image = service.create_schedule()
-
-    # with open("img.png", "wb") as f:
-    #     f.write(image)
-    #file_path = f'../data/{user.group_name}_schedule.png'
     document = BufferedInputFile(image,filename=f"{user.name}_schedule.png")
-
     await message.answer_document(
         text=f"Расписание из байтов для {user.name}",
         document=document,
     )
-    # print(1)
-    # document2 = FSInputFile(path="img.png", filename="img")
-    # await message.answer("Отправляю")
-    # await message.answer_document(
-    #     text="Расписание из файла",
-    #     document=document2,
-    # )
