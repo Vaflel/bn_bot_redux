@@ -1,3 +1,4 @@
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 departments_short_names = {
@@ -17,4 +18,12 @@ for full_name, short_name in departments_short_names.items():
 login_keyboard.adjust(1)
 login_keyboard = login_keyboard.as_markup()
 
-
+user_exist_keyboard = ReplyKeyboardMarkup(
+    resize_keyboard=True,
+    keyboard = [
+        [
+            KeyboardButton(text = "/Удалить"),
+            KeyboardButton(text = "/Оставить"),
+        ],
+    ]
+)

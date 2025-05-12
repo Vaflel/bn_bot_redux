@@ -7,10 +7,6 @@ main_kb = ReplyKeyboardMarkup(
             KeyboardButton(text = "/login"),
             KeyboardButton(text = "/Расписание"),
         ],
-        # [
-        #     KeyboardButton(text="/admin"),
-        #     KeyboardButton(text="/login")
-        # ]
     ]
     )
 

@@ -1,12 +1,12 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram import Router, types, F
+from aiogram import Router, types
 from aiogram.filters import Command
 
 from src.bot_api.utils.departments_list import departments_short_names
-from src.core.users.service import UsersService, UserIsExist
+from src.core.users.service import UsersService
 from src.core.users.schemas import SUser
-from src.bot_api.keyboards.login_kb import login_keyboard
+from src.bot_api.keyboards.login_kb import login_keyboard, user_exist_keyboard
 
 router = Router()
 
@@ -51,16 +51,25 @@ async def process_department_name(callback: types.CallbackQuery, state: FSMConte
 @router.message(UserForm.group_name)
 async def process_group_name(message: types.Message, state: FSMContext):
     data = await state.update_data(group_name=message.text)
-    user = SUser(
-        id=message.from_user.id,
-        name=data.get("name"),
-        group_name=data.get("group_name"),
-        department_name=data.get("department_name"),
-    )
-    try:
+    existed_user = await UsersService.get_by_id(message.from_user.id)
+    if not existed_user:
+        user = SUser(
+            id=message.from_user.id,
+            name=data.get("name"),
+            group_name=data.get("group_name"),
+            department_name=data.get("department_name"),
+        )
         await UsersService.create_user(user)
-        text = f"Пользователь создан, теперь в расписание будут добавляться индивидуальные занятия для {user.name}"
+        await state.clear()
+        text = f"""
+        Пользователь создан, 
+        теперь в расписание будут добавляться индивидуальные занятия для {user.name}
+        """
         await message.answer(text=text)
-    except UserIsExist:
-        await message.answer("Пользователь уже существует")
-    await state.clear()
+    else:
+        text = f"""
+        К этому аккаунту Telegram уже привязан пользователь: 
+        {existed_user.name}, {existed_user.group_name}, {existed_user.department_name}
+        Вы можете удалить и создать нового, либо оставить текущего
+        """
+        await message.answer(text=text, reply_markup=user_exist_keyboard)

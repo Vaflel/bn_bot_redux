@@ -18,3 +18,9 @@ class UsersRepository:
             user_dto = SUser.model_validate(user_orm)
             return user_dto
         return None
+
+    async def delete(self, id: int):
+        user_orm = await self._session.get(UsersOrm, id)
+        if user_orm:
+            await self._session.delete(user_orm)
+        return None
