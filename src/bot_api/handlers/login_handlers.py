@@ -3,6 +3,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram import Router, types
 from aiogram.filters import Command
 
+from src.bot_api.keyboards.reply_kb import main_kb
 from src.bot_api.utils.departments_list import departments_short_names
 from src.core.users.service import UsersService
 from src.core.users.schemas import SUser
@@ -26,10 +27,33 @@ async def cancel_handler(message: types.Message, state: FSMContext) -> None:
     await message.answer(text="Отменено")
 
 
+@router.message(Command(commands=["Оставить"]))
+async def keep_user(message: types.Message, state: FSMContext) -> None:
+    await state.clear()
+    await message.answer(
+        text="Существующий пользователь оставлен. Вы можете продолжить использовать бота.",
+        reply_markup=main_kb
+    )
+
+
+@router.message(Command(commands=["Удалить"]))
+async def delete_user(message: types.Message, state: FSMContext) -> None:
+    await UsersService.delete_user(message.from_user.id)
+    await state.set_state(UserForm.name)
+    text = "Введи своё имя в формате Иванов И."
+    await message.answer(text=text)
+
+
 @router.message(Command(commands=["login"]))
 async def login(message: types.Message, state: FSMContext) -> None:
-    await state.set_state(UserForm.name)
-    await message.answer(text="Введи своё имя в формате Иванов И.")
+    existed_user = await UsersService.get_by_id(message.from_user.id)
+    if existed_user:
+        text = f"К этому аккаунту Telegram уже привязан пользователь: {existed_user.name}, {existed_user.group_name}, {existed_user.department_name} Вы можете удалить и создать нового, либо оставить текущего"
+        await message.answer(text=text, reply_markup=user_exist_keyboard)
+    else:
+        await state.set_state(UserForm.name)
+        text = "Введи своё имя в формате Иванов И."
+        await message.answer(text=text)
 
 
 @router.message(UserForm.name)
@@ -51,25 +75,13 @@ async def process_department_name(callback: types.CallbackQuery, state: FSMConte
 @router.message(UserForm.group_name)
 async def process_group_name(message: types.Message, state: FSMContext):
     data = await state.update_data(group_name=message.text)
-    existed_user = await UsersService.get_by_id(message.from_user.id)
-    if not existed_user:
-        user = SUser(
-            id=message.from_user.id,
-            name=data.get("name"),
-            group_name=data.get("group_name"),
-            department_name=data.get("department_name"),
-        )
-        await UsersService.create_user(user)
-        await state.clear()
-        text = f"""
-        Пользователь создан, 
-        теперь в расписание будут добавляться индивидуальные занятия для {user.name}
-        """
-        await message.answer(text=text)
-    else:
-        text = f"""
-        К этому аккаунту Telegram уже привязан пользователь: 
-        {existed_user.name}, {existed_user.group_name}, {existed_user.department_name}
-        Вы можете удалить и создать нового, либо оставить текущего
-        """
-        await message.answer(text=text, reply_markup=user_exist_keyboard)
+    user = SUser(
+        id=message.from_user.id,
+        name=data.get("name"),
+        group_name=data.get("group_name"),
+        department_name=data.get("department_name"),
+    )
+    await UsersService.create_user(user)
+    await state.clear()
+    text = f"Пользователь создан, теперь в расписание будут добавляться индивидуальные занятия для {user.name}"
+    await message.answer(text=text, reply_markup=main_kb)

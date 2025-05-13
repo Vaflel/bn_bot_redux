@@ -29,9 +29,12 @@ class UsersService:
                 return user_dto
             return None
 
+
     @staticmethod
     async def delete_user(user_id: int):
         async with uow:
-            if await uow.users.get_by_id(user_id):
-                uow.users.delete(user_id)
-            raise UserIsNotExist
+            user = await uow.users.get_by_id(user_id)
+            if user:
+                await uow.users.delete(user_id)
+            else:
+                raise UserIsNotExist("Пользователь не существует.")
